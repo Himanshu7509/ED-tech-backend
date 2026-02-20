@@ -33,7 +33,11 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // Security middleware
 app.use(helmet());
-app.use(cors());
+app.use(cors({
+  origin: '*', // Allow all origins
+  credentials: true, // Enable cookies to be sent with requests
+  optionsSuccessStatus: 200 // Set success status for preflight requests
+}));
 
 // Dev logging middleware
 if (process.env.NODE_ENV === 'development') {
