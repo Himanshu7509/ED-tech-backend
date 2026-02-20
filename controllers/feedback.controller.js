@@ -73,6 +73,21 @@ exports.getFeedbackById = asyncHandler(async (req, res, next) => {
 exports.submitFeedback = asyncHandler(async (req, res, next) => {
   const { courseId, rating, comment } = req.body;
 
+  // Validate required fields
+  if (!courseId || !rating || !comment) {
+    return next(new ErrorResponse('Please provide all required fields: courseId, rating, comment', 400));
+  }
+
+  // Validate rating range
+  if (rating < 1 || rating > 5) {
+    return next(new ErrorResponse('Rating must be between 1 and 5', 400));
+  }
+
+  // Validate comment length
+  if (comment.length < 10 || comment.length > 500) {
+    return next(new ErrorResponse('Comment must be between 10 and 500 characters', 400));
+  }
+
   // Check if course exists
   const course = await Course.findById(courseId);
   if (!course) {

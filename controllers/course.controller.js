@@ -36,6 +36,26 @@ exports.addCourse = asyncHandler(async (req, res, next) => {
   // Add user to req.body
   req.body.instructor = req.user.id;
 
+  // Validate required fields
+  const { title, category, experienceLevel, shortDescription, longDescription, 
+          courseCurriculum, price, thumbnail, instructor } = req.body;
+  
+  if (!title || !category || !experienceLevel || !shortDescription || 
+      !longDescription || !courseCurriculum || !price || !thumbnail || !instructor) {
+    return next(new ErrorResponse('Please provide all required fields: title, category, experienceLevel, shortDescription, longDescription, courseCurriculum, price, thumbnail, instructor', 400));
+  }
+
+  // Validate experience level
+  const validLevels = ['Beginner', 'Intermediate', 'Advanced'];
+  if (!validLevels.includes(experienceLevel)) {
+    return next(new ErrorResponse(`Invalid experience level. Must be one of: ${validLevels.join(', ')}`, 400));
+  }
+
+  // Validate price
+  if (price < 0) {
+    return next(new ErrorResponse('Price must be a positive number', 400));
+  }
+
   const course = await Course.create(req.body);
 
   res.status(201).json({
@@ -195,3 +215,5 @@ exports.getMostPopularCourses = asyncHandler(async (req, res, next) => {
     data: courses
   });
 });
+
+

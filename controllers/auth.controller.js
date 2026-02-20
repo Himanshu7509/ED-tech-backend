@@ -10,6 +10,22 @@ const crypto = require('crypto');
 exports.register = asyncHandler(async (req, res, next) => {
   const { fullName, email, phone, password, role } = req.body;
 
+  // Validate required fields
+  if (!fullName || !email || !phone || !password) {
+    return next(new ErrorResponse('Please provide all required fields: fullName, email, phone, password', 400));
+  }
+
+  // Validate email format
+  const emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
+  if (!emailRegex.test(email)) {
+    return next(new ErrorResponse('Please provide a valid email address', 400));
+  }
+
+  // Validate password strength
+  if (password.length < 6) {
+    return next(new ErrorResponse('Password must be at least 6 characters long', 400));
+  }
+
   // Create user
   const user = await User.create({
     fullName,

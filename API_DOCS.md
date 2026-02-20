@@ -45,6 +45,13 @@ Request Body:
 }
 ```
 
+Required fields:
+- `fullName` (string)
+- `email` (string, valid email format)
+- `phone` (string)
+- `password` (string, minimum 6 characters)
+- `role` (string, either "student" or "admin")
+
 ### Login User
 **POST** `/api/v1/auth/login`
 
@@ -55,6 +62,10 @@ Request Body:
   "password": "password123"
 }
 ```
+
+Required fields:
+- `email` (string, valid email format)
+- `password` (string)
 
 ### Logout User
 **GET** `/api/v1/auth/logout`
@@ -80,6 +91,11 @@ Request Body:
 }
 ```
 
+Required fields:
+- `fullName` (string)
+- `email` (string, valid email format)
+- `phone` (string)
+
 ### Update Password
 **PUT** `/api/v1/auth/updatepassword`
 
@@ -93,6 +109,10 @@ Request Body:
 }
 ```
 
+Required fields:
+- `currentPassword` (string, minimum 6 characters)
+- `newPassword` (string, minimum 6 characters)
+
 ### Forgot Password
 **POST** `/api/v1/auth/forgotpassword`
 
@@ -103,6 +123,9 @@ Request Body:
 }
 ```
 
+Required fields:
+- `email` (string, valid email format)
+
 ### Reset Password
 **PUT** `/api/v1/auth/resetpassword/:resettoken`
 
@@ -112,6 +135,9 @@ Request Body:
   "password": "newpassword123"
 }
 ```
+
+Required fields:
+- `password` (string, minimum 6 characters)
 
 ---
 
@@ -186,6 +212,17 @@ Request Body:
   "instructor": "Jane Doe"
 }
 ```
+
+Required fields:
+- `title` (string, max 100 characters)
+- `category` (string)
+- `experienceLevel` (must be Beginner/Intermediate/Advanced)
+- `shortDescription` (string, max 200 characters)
+- `longDescription` (string)
+- `courseCurriculum` (array of modules with lessons)
+- `price` (number, must be positive)
+- `thumbnail` (string, valid URL)
+- `instructor` (string)
 
 ### Update Course (Admin Only)
 **PUT** `/api/v1/courses/:id`
@@ -322,6 +359,38 @@ Requires authentication.
 
 Requires authentication and admin role.
 
+Request Body:
+```json
+{
+  "title": "JavaScript Masterclass 2024",
+  "description": "Advanced JavaScript concepts and modern ES6+ features",
+  "eventDate": "2024-12-15T10:00:00.000Z",
+  "eventTime": "10:00 AM",
+  "eventType": "Webinar",
+  "speaker": "John Doe",
+  "seatsAvailable": 100,
+  "registrationLink": "https://example.com/register"
+}
+
+Allowed event types: "Webinar", "Workshop", "Seminar", "Conference"
+
+Required fields:
+- `title` (string, max 100 characters)
+- `description` (string)
+- `eventDate` (date in ISO format)
+- `eventTime` (string, e.g. "10:00 AM")
+- `eventType` (must be Webinar/Workshop/Seminar/Conference)
+- `speaker` (string)
+
+Optional fields:
+- `seatsAvailable` (number, default: 100)
+- `registrationLink` (string)
+- `banner` (string, Cloudinary URL)
+
+Allowed event types: "Webinar", "Workshop", "Seminar", "Conference"
+
+```
+
 ### Update Event (Admin Only)
 **PUT** `/api/v1/events/:id`
 
@@ -417,6 +486,9 @@ Request Body:
   "isRead": true
 }
 ```
+
+Required fields:
+- `isRead` (boolean)
 
 ### Delete Contact (Admin Only)
 **DELETE** `/api/v1/contacts/:id`

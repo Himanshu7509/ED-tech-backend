@@ -36,6 +36,24 @@ exports.getEvent = asyncHandler(async (req, res, next) => {
 // @route   POST /api/v1/events
 // @access  Private/Admin
 exports.createEvent = asyncHandler(async (req, res, next) => {
+  // Validate required fields
+  const { title, description, eventDate, eventTime, eventType, speaker } = req.body;
+  
+  if (!title || !description || !eventDate || !eventTime || !eventType || !speaker) {
+    return next(new ErrorResponse('Please provide all required fields: title, description, eventDate, eventTime, eventType, speaker', 400));
+  }
+
+  // Validate event type
+  const validEventTypes = ['Webinar', 'Workshop', 'Seminar', 'Conference'];
+  if (!validEventTypes.includes(eventType)) {
+    return next(new ErrorResponse(`Invalid event type. Must be one of: ${validEventTypes.join(', ')}`, 400));
+  }
+
+  // Validate date format
+  if (isNaN(Date.parse(eventDate))) {
+    return next(new ErrorResponse('Invalid event date format. Please use ISO format (YYYY-MM-DD)', 400));
+  }
+
   const event = await Event.create(req.body);
 
   res.status(201).json({

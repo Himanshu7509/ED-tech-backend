@@ -9,6 +9,30 @@ const sendEmail = require('../utils/sendEmail');
 exports.submitContactForm = asyncHandler(async (req, res, next) => {
   const { fullName, email, subject, description } = req.body;
 
+  // Validate required fields
+  if (!fullName || !email || !subject || !description) {
+    return next(new ErrorResponse('Please provide all required fields: fullName, email, subject, description', 400));
+  }
+
+  // Validate email format
+  const emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
+  if (!emailRegex.test(email)) {
+    return next(new ErrorResponse('Please provide a valid email address', 400));
+  }
+
+  // Validate field lengths
+  if (fullName.length > 50) {
+    return next(new ErrorResponse('Full name cannot be more than 50 characters', 400));
+  }
+
+  if (subject.length > 100) {
+    return next(new ErrorResponse('Subject cannot be more than 100 characters', 400));
+  }
+
+  if (description.length > 1000) {
+    return next(new ErrorResponse('Description cannot be more than 1000 characters', 400));
+  }
+
   const contact = await Contact.create({
     fullName,
     email,
